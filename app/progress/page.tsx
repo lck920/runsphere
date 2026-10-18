@@ -93,6 +93,11 @@ function Dashboard({ d }: { d: Data }) {
         <p className="mt-4 font-semibold leading-snug">
           {d.localFact ? <>That&apos;s further than <span className="text-accent-ink">{d.localFact.route}</span>! <MapPin aria-hidden className={`${inlineIcon} text-accent`} /></> : <>Every run counts. Your first fun fact unlocks soon!</>}
         </p>
+        {d.nextLocalFact && (
+          <p className="mt-1 text-sm text-muted">
+            Next: {Math.max(0.1, Math.round((d.nextLocalFact.km - d.totalKm) * 10) / 10)} km more to beat {d.nextLocalFact.route}.
+          </p>
+        )}
       </section>
 
       <section className="grid grid-cols-3 gap-2">
@@ -126,8 +131,10 @@ function Dashboard({ d }: { d: Data }) {
         {d.milestones.reached.length === 0 && <p className="text-sm text-muted">Your first milestone is 5 km total.</p>}
         <ul className="space-y-2">
           {d.milestones.reached.map((m) => (
-            <li key={m.km} className="flex gap-3 text-sm">
-              <span className="text-xl">{m.icon}</span>
+            <li key={m.km} className="flex items-start gap-3 text-sm">
+              <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent text-on-accent">
+                <Icon name={m.icon} className="size-4" strokeWidth={2.5} />
+              </span>
               <span><strong>{m.title}</strong> · <span className="text-muted">{m.fact}</span></span>
             </li>
           ))}

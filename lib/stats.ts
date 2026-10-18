@@ -116,6 +116,11 @@ export function localFact(totalKm: number) {
   return LOCAL_ROUTES.filter((r) => r.km <= totalKm).at(-1) ?? null;
 }
 
+/** The next comparison still ahead ("2.3 km more to beat the Penang Bridge"). */
+export function nextLocalFact(totalKm: number) {
+  return LOCAL_ROUTES.find((r) => r.km > totalKm) ?? null;
+}
+
 export function progressSummary(runs: RunRow[], today: string) {
   const thisMonday = weekStart(today);
   const byWeek = new Map<string, WeekTotal>();
@@ -187,6 +192,7 @@ export function progressSummary(runs: RunRow[], today: string) {
     }),
     milestones: { reached: MILESTONES.filter((m) => km >= m.km), next: MILESTONES.find((m) => km < m.km) ?? null },
     localFact: localFact(km),
+    nextLocalFact: nextLocalFact(km),
     awards: AWARDS.map(({ earned, ...a }) => ({ ...a, earned: earned(ctx) })),
   };
 }

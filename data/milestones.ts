@@ -13,21 +13,34 @@ export const MILESTONES: { km: number; icon: IconName; title: string; fact: stri
 ];
 
 /**
- * Local comparisons: we show the biggest one that fits inside your total,
- * e.g. "You've run 8.3 km. That's like Bukit Jalil to Sri Petaling!"
- * Distances marked VERIFY are rough estimates. Check them on Google Maps
- * (walking/road distance) before the demo and fix the numbers here.
+ * Fun-fact comparisons. The progress page shows the biggest one inside your total
+ * ("That's further than ___!") and the next one to aim for ("1.2 km more to beat ___").
+ * Write each as a noun phrase that fits both sentences. Keep the list sorted by km.
+ *
+ * Unmarked entries are well-documented figures. Entries marked VERIFY are rough
+ * estimates (road/route distances vary); check them on Google Maps before the demo.
  */
 export const LOCAL_ROUTES: { km: number; route: string }[] = [
-  { km: 0.4, route: "one lap of the Bukit Jalil National Stadium track" },
-  { km: 4, route: "KLCC to KL Sentral" }, // VERIFY
+  { km: 0.4, route: "a lap of the Bukit Jalil National Stadium track" },
+  { km: 0.45, route: "the height of the Petronas Twin Towers" },
+  { km: 0.68, route: "the height of Merdeka 118" },
+  { km: 1.05, route: "the Johor–Singapore Causeway" },
+  { km: 1.3, route: "a lap of the KLCC Park jogging track" }, // VERIFY
+  { km: 4, route: "the walk from KLCC to KL Sentral" }, // VERIFY
+  { km: 4.1, route: "the height of Mount Kinabalu" },
   { km: 8, route: "Bukit Jalil to Sri Petaling" }, // VERIFY
-  { km: 13.5, route: "across the Penang Bridge" },
-  { km: 24, route: "across the Second Penang Bridge" },
-  { km: 35, route: "KL to Putrajaya" }, // VERIFY
+  { km: 8.7, route: "the Mount Kinabalu summit trail" }, // VERIFY
+  { km: 8.85, route: "the height of Mount Everest" },
+  { km: 13.5, route: "the Penang Bridge" },
+  { km: 24, route: "the Second Penang Bridge" },
+  { km: 35, route: "the drive from KL to Putrajaya" }, // VERIFY
+  { km: 46, route: "the whole LRT Kelana Jaya Line" }, // VERIFY
   { km: 58, route: "KL up to Genting Highlands" }, // VERIFY
-  { km: 145, route: "KL to Melaka" }, // VERIFY
-  { km: 205, route: "KL to Ipoh" }, // VERIFY
-  { km: 355, route: "KL to Penang" }, // VERIFY
+  { km: 145, route: "the drive from KL to Melaka" }, // VERIFY
+  { km: 205, route: "the drive from KL to Ipoh" }, // VERIFY
+  { km: 250, route: "the drive from KL to Kuantan" }, // VERIFY
+  { km: 330, route: "the drive from KL to Johor Bahru" }, // VERIFY
+  { km: 355, route: "the drive from KL to Penang" }, // VERIFY
   { km: 772, route: "the full North–South Expressway" },
+  { km: 1620, route: "the flight from KL to Kota Kinabalu" }, // VERIFY
 ];

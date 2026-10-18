@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { streaks, rankBoard, challengeProgress, formatPace, progressSummary, crossedMilestone, localFact } from "../lib/stats.ts";
+import { streaks, rankBoard, challengeProgress, formatPace, progressSummary, crossedMilestone, localFact, nextLocalFact } from "../lib/stats.ts";
+import { LOCAL_ROUTES } from "../data/milestones.ts";
 import { isStravaLink, validateRun } from "../lib/validate.ts";
 
 const TODAY = "2026-10-14"; // Wednesday; week starts 2026-10-12
@@ -120,4 +121,11 @@ test("only Strava links are shown publicly", () => {
   assert.equal(isStravaLink("https://strava.com.evil.example/x"), false);
   assert.equal(isStravaLink("https://evilstrava.com/x"), false);
   assert.equal(isStravaLink(null), false);
+});
+
+test("fun facts stay sorted and the next one is ahead", () => {
+  const kms = LOCAL_ROUTES.map((r) => r.km);
+  assert.deepEqual(kms, [...kms].sort((a, b) => a - b));
+  assert.equal(nextLocalFact(13)?.route, "the Penang Bridge");
+  assert.equal(nextLocalFact(99999), null);
 });
