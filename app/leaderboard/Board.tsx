@@ -2,17 +2,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CircleCheck, Flag, Flame, Target } from "lucide-react";
+import { CircleCheck, ExternalLink, Flag, Flame, Target } from "lucide-react";
 import { inlineIcon } from "@/components/styles";
 import ProgressBar from "@/components/ProgressBar";
 import { CHALLENGES, LEVELS, type Level } from "@/data/challenges";
 import { getSavedNickname } from "@/lib/local";
-import type { BoardEntry } from "@/lib/stats";
+import type { BoardEntry, Proof } from "@/lib/stats";
+
+type Entry = BoardEntry<{ nickname: string; runs: number; km: number; streak: number; proofs: Proof[] }>;
 
 type State =
   | { status: "loading" }
   | { status: "error" }
-  | { status: "ok"; week: string; entries: BoardEntry[]; me: string };
+  | { status: "ok"; week: string; entries: Entry[]; me: string };
 
 export default function Board() {
   // ?level=intermediate opens that tab (used by the "Leaderboard" button after logging a run).
@@ -113,6 +115,27 @@ export default function Board() {
                 <div className="mt-3">
                   <ProgressBar pct={e.challenge.pct} label={`${e.nickname}'s challenge progress`} />
                 </div>
+                {/* This week's proof: tap a screenshot to open it full size. */}
+                {e.proofs.length > 0 && (
+                  <ul className="mt-3 flex gap-2 overflow-x-auto" aria-label={`${e.nickname}'s run proof`}>
+                    {e.proofs.map((p, i) => (
+                      <li key={i} className="flex shrink-0 gap-2">
+                        {p.image && (
+                          <a href={p.image} target="_blank" rel="noopener noreferrer" aria-label={`Screenshot of run on ${p.date}`}>
+                            {/* eslint-disable-next-line @next/next/no-img-element -- user uploads; plain <img> avoids Vercel image-optimisation quota */}
+                            <img src={p.image} alt="" loading="lazy" className="size-14 rounded-lg object-cover object-top ring-1 ring-line" />
+                          </a>
+                        )}
+                        {p.link && (
+                          <a href={p.link} target="_blank" rel="noopener noreferrer nofollow ugc"
+                            className="flex h-14 items-center gap-1 rounded-lg border border-line px-3 text-xs font-semibold">
+                            Strava <ExternalLink aria-hidden className="size-3.5" />
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}

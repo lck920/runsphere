@@ -64,14 +64,11 @@ export function challengeProgress(level: Level, runs: number, km: number): Chall
   };
 }
 
-export type BoardEntry = {
-  rank: number;
-  nickname: string;
-  runs: number;
-  km: number;
-  streak: number;
-  challenge: ChallengeProgress;
-};
+/** Proof of one run shown on the leaderboard: a public screenshot URL and/or a Strava link. */
+export type Proof = { date: string; image: string | null; link: string | null };
+
+type BoardRow = { nickname: string; runs: number; km: number; streak: number };
+export type BoardEntry<T extends BoardRow = BoardRow> = T & { rank: number; challenge: ChallengeProgress };
 
 /**
  * Leaderboard = consistency, not speed or distance.
@@ -79,11 +76,11 @@ export type BoardEntry = {
  * decides rank, so a beginner doing 2 short runs beats someone doing 1 long one.
  * Exact ties share a rank (1, 1, 3) and are listed alphabetically.
  */
-export function rankBoard(rows: { nickname: string; runs: number; km: number; streak: number }[], level: Level): BoardEntry[] {
+export function rankBoard<T extends BoardRow>(rows: T[], level: Level): BoardEntry<T>[] {
   const sorted = [...rows].sort(
     (a, b) => b.runs - a.runs || b.streak - a.streak || a.nickname.localeCompare(b.nickname),
   );
-  const out: BoardEntry[] = [];
+  const out: BoardEntry<T>[] = [];
   sorted.forEach((r, i) => {
     const prev = out[i - 1];
     const tied = prev && prev.runs === r.runs && prev.streak === r.streak;

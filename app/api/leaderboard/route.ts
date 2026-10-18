@@ -2,7 +2,8 @@
 import type { NextRequest } from "next/server";
 import { db, failMessage } from "@/lib/supabase";
 import { LEVELS, type Level } from "@/data/challenges";
-import { rankBoard, streaks, type WeekTotal } from "@/lib/stats";
+import { rankBoard, streaks, type Proof, type WeekTotal } from "@/lib/stats";
+import { isStravaLink } from "@/lib/validate";
 import { formatWeek, todayKL, weekStart } from "@/lib/week";
 
 export async function GET(req: NextRequest) {
@@ -18,18 +19,22 @@ export async function GET(req: NextRequest) {
     // move to a SQL function (rpc) if RunSphere outgrows that.
     const { data: runs, error } = await supa
       .from("runs")
-      .select("runner_id, distance_km, runners(nickname)")
+      .select("runner_id, run_date, distance_km, screenshot_path, activity_link, runners(nickname)")
       .eq("level", level)
       .gte("run_date", monday)
       .lte("run_date", today);
     if (error) throw error;
 
-    const byRunner = new Map<string, { nickname: string; runs: number; km: number; streak: number }>();
+    const byRunner = new Map<string, { nickname: string; runs: number; km: number; streak: number; proofs: Proof[] }>();
     for (const r of runs) {
       const nickname = (r.runners as unknown as { nickname: string }).nickname;
-      const e = byRunner.get(r.runner_id) ?? { nickname, runs: 0, km: 0, streak: 0 };
+      const e = byRunner.get(r.runner_id) ?? { nickname, runs: 0, km: 0, streak: 0, proofs: [] };
       e.runs++;
       e.km += Number(r.distance_km);
+      // Public proof: screenshot (public bucket URL) and/or a Strava link.
+      const image = r.screenshot_path ? supa.storage.from("screenshots").getPublicUrl(r.screenshot_path).data.publicUrl : null;
+      const link = isStravaLink(r.activity_link) ? r.activity_link : null;
+      if (image || link) e.proofs.push({ date: r.run_date, image, link });
       byRunner.set(r.runner_id, e);
     }
 

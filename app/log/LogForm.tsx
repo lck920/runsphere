@@ -146,7 +146,7 @@ export default function LogForm({ today }: { today: string }) {
           {err("link")}
         </label>
         <label className="mt-3 block">
-          <span className="text-sm text-muted">Screenshot (JPG/PNG/WebP, max 4 MB)</span>
+          <span className="text-sm text-muted">Screenshot (public · JPG/PNG/WebP, max 4 MB)</span>
           <input name="screenshot" type="file" accept="image/jpeg,image/png,image/webp"
             className="mt-1 block w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-on-accent" />
           {err("screenshot")}
@@ -155,8 +155,9 @@ export default function LogForm({ today }: { today: string }) {
 
       <p className="rounded-xl border border-line p-3 text-xs text-muted">
         <Lock aria-hidden className={inlineIcon} /> <strong>Privacy:</strong> we only store your nickname and run details. No real name, email or phone number.
-        Your nickname, run count, distance and streak appear on the public leaderboard. Screenshots are private, but
-        crop out maps or anything showing where you live. Don&apos;t use your real name as a nickname. (PDPA 2010)
+        Your nickname, run count, distance, streak, <strong>screenshot and Strava link are public</strong> on the
+        leaderboard, so crop out maps, your name or anything showing where you live or train before uploading.
+        Don&apos;t use your real name as a nickname. (PDPA 2010)
       </p>
 
       {err("form")}

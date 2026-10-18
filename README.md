@@ -19,7 +19,7 @@ No login, no sign-up, no download: runners use a nickname only.
 ## 1. Create the Supabase project
 
 1. Sign up at [supabase.com](https://supabase.com) (free) → **New project**. Choose region **Southeast Asia (Singapore)**. The app's server functions also run in Singapore (`vercel.json`), so they sit next to the database.
-2. When the project is ready, open **SQL Editor → New query**, paste the whole of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**. This creates the tables, indexes, the `runner_weeks` view, Row Level Security and the private `screenshots` storage bucket. It is safe to run again.
+2. When the project is ready, open **SQL Editor → New query**, paste the whole of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**. This creates the tables, indexes, the `runner_weeks` view, Row Level Security and the public `screenshots` storage bucket. It is safe to run again.
 3. *(Optional, for demos)* New query → paste [`supabase/seed.sql`](supabase/seed.sql) → **Run**. You should see 15 runners with their run counts. Seed data is dated relative to today, and re-running it only replaces those 15 demo runners.
 
 ## 2. Environment variables
@@ -130,9 +130,10 @@ tests/                   Unit tests (npm test)
 
 ## Security & privacy (PDPA 2010)
 
-- **Data minimisation:** we store only a nickname and run details (date, distance, time, level, mood, optional link/screenshot). No name, email, phone or location.
+- **Data minimisation:** we store only a nickname and run details (date, distance, time, level, mood, optional link/screenshot). No name, email, phone or location. Screenshots and Strava links are public, which the form states before upload.
 - **Row Level Security** is enabled on every table with **no** policies, so Supabase's public API can read or write nothing. All access goes through the Next.js API routes using the server-only key.
-- Screenshots go to a **private** bucket (no public URLs), max 4 MB, JPG/PNG/WebP only.
+- Screenshots go to a **public** bucket so they can be shown on the leaderboard (users are told this on the form). Max 4 MB, JPG/PNG/WebP only. The bucket can't be listed or uploaded to directly; only the API uploads. Only **strava.com** links are shown publicly; other links are stored but hidden.
+- **Moderation:** to remove an inappropriate screenshot, delete the file in Supabase → Storage → `screenshots` and clear that run's `screenshot_path` in Table Editor → `runs`.
 - Inputs are validated in the browser, again in the API, and again by database constraints.
 - Security headers (`nosniff`, `X-Frame-Options`, referrer and permissions policy) are set in `next.config.ts`.
 - The log form shows a privacy note; the plan and warm-up pages show a "not medical advice" disclaimer.

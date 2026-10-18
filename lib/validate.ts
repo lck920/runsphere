@@ -82,3 +82,17 @@ export function validateRun(f: Record<string, string | undefined>, today: string
     : { nickname, date, distanceKm, durationMin, level, moodBefore, moodAfter, link };
   return { errors, run };
 }
+
+/**
+ * Only Strava links are shown publicly on the leaderboard, so nobody can use it
+ * to spread random (spam/phishing) URLs. Other https links are still saved, just not displayed.
+ */
+export function isStravaLink(url: string | null): url is string {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname;
+    return host === "strava.com" || host.endsWith(".strava.com") || host === "strava.app.link";
+  } catch {
+    return false;
+  }
+}

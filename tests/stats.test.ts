@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { streaks, rankBoard, challengeProgress, formatPace, progressSummary, crossedMilestone, localFact } from "../lib/stats.ts";
-import { validateRun } from "../lib/validate.ts";
+import { isStravaLink, validateRun } from "../lib/validate.ts";
 
 const TODAY = "2026-10-14"; // Wednesday; week starts 2026-10-12
 const wk = (week_start: string, runs: number) => ({ week_start, runs, km: runs * 3 });
@@ -111,4 +111,13 @@ test("milestones and local facts", () => {
   assert.equal(crossedMilestone(11, 12), null);
   assert.equal(localFact(8.3)?.route, "Bukit Jalil to Sri Petaling");
   assert.equal(localFact(0.1), null);
+});
+
+
+test("only Strava links are shown publicly", () => {
+  assert.equal(isStravaLink("https://www.strava.com/activities/123"), true);
+  assert.equal(isStravaLink("https://strava.app.link/abc"), true);
+  assert.equal(isStravaLink("https://strava.com.evil.example/x"), false);
+  assert.equal(isStravaLink("https://evilstrava.com/x"), false);
+  assert.equal(isStravaLink(null), false);
 });

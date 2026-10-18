@@ -29,7 +29,7 @@ create table if not exists public.runs (
   mood_before     smallint not null check (mood_before between 1 and 5),
   mood_after      smallint not null check (mood_after between 1 and 5),
   activity_link   text check (activity_link is null or activity_link ~ '^https://'),
-  screenshot_path text,   -- object path inside the private "screenshots" bucket
+  screenshot_path text,   -- object path inside the public "screenshots" bucket
   created_at      timestamptz not null default now(),
   -- Same sanity range the app validates with (lib/validate.ts).
   constraint sensible_pace check (duration_min / distance_km between 3 and 20)
@@ -51,12 +51,13 @@ alter table public.runs    enable row level security;
 revoke all on public.runners, public.runs from anon, authenticated;
 
 -- ---------------------------------------------------------------
--- Private storage bucket for optional Strava screenshots (max 4 MB).
--- Private = no public URLs; storage.objects already has RLS on.
+-- Public storage bucket for optional Strava screenshots (max 4 MB), shown on the leaderboard.
+-- Public = anyone with an image's URL can view it. Listing/uploading is still blocked
+-- (storage.objects has RLS on and no policies); only our API uploads, with the service key.
 -- ---------------------------------------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('screenshots', 'screenshots', false, 4194304, array['image/jpeg', 'image/png', 'image/webp'])
-on conflict (id) do nothing;
+values ('screenshots', 'screenshots', true, 4194304, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do update set public = true;
 
 -- ---------------------------------------------------------------
 -- runner_weeks: runs + km per runner per Monday-week.

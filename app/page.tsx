@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowRight, Lock, TriangleAlert } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Icon, { type IconName } from "@/components/Icon";
-import { inlineIcon } from "@/components/styles";
 import { connection } from "next/server";
 import { CHALLENGES, LEVELS } from "@/data/challenges";
 import { formatWeek, todayKL, weekStart } from "@/lib/week";
@@ -72,9 +71,9 @@ export default function Home() {
         </ul>
       </section>
 
-      <footer className="space-y-1 border-t border-line pt-4 text-xs text-muted">
-        <p><Lock aria-hidden className={inlineIcon} /> No sign-up. We only store your nickname and run details (PDPA 2010).</p>
-        <p><TriangleAlert aria-hidden className={inlineIcon} /> RunSphere gives general guidance, not medical advice. Check with a doctor if you have a health condition.</p>
+      <footer className="border-t border-line pt-4 text-xs text-muted">
+        No sign-up. We only store your nickname and run details (PDPA 2010). RunSphere gives general guidance, not
+        medical advice. Check with a doctor if you have a health condition.
       </footer>
     </div>
   );
