@@ -1,69 +1,91 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import Link from "next/link";
+import { ArrowRight, Lock, TriangleAlert } from "lucide-react";
+import Icon, { type IconName } from "@/components/Icon";
+import { inlineIcon } from "@/components/styles";
+import { connection } from "next/server";
+import { CHALLENGES, LEVELS } from "@/data/challenges";
+import { formatWeek, todayKL, weekStart } from "@/lib/week";
+
+const FEATURES: { href: string; icon: IconName; title: string; text: string }[] = [
+  { href: "/log", icon: "footprints", title: "Log a run", text: "Takes 30 seconds" },
+  { href: "/leaderboard", icon: "trophy", title: "Leaderboard", text: "Ranked by consistency" },
+  { href: "/plan", icon: "calendar", title: "My weekly plan", text: "Safe, personalised" },
+  { href: "/warmup", icon: "flame", title: "Warm-up", text: "Guided, with a timer" },
+  { href: "/progress", icon: "chart", title: "My progress", text: "Streaks, awards, stats" },
+  { href: "/learn", icon: "book", title: "Learn", text: "Run smarter, stay healthy" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="space-y-8">
+      <section className="rounded-3xl hero surface-dark p-6 ring-1 ring-line">
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent-ink">SDG 3 · Good Health & Well-being</p>
+        <h1 className="mt-2 text-3xl display leading-tight">
+          Small runs.<br />Every week.<br /><span className="text-accent-ink">Big habit.</span>
+        </h1>
+        <p className="mt-3 text-muted">
+          RunSphere helps uni students in Malaysia start running and keep at it with weekly challenges,
+          streaks and a plan that fits your timetable. Free, no sign-up, just a nickname.
+        </p>
+        <Link href="/log" className="mt-5 inline-block rounded-full bg-accent px-6 py-3 display uppercase text-on-accent active:scale-95">
+          Log your first run <ArrowRight aria-hidden className="inline size-5 align-[-4px]" strokeWidth={3} />
+        </Link>
+      </section>
+
+      <section>
+        <Suspense fallback={<h2 className="text-xl font-bold">This week&apos;s challenges</h2>}>
+          <WeekHeading />
+        </Suspense>
+        <ul className="mt-3 space-y-3">
+          {LEVELS.map((l) => {
+            const c = CHALLENGES[l];
+            return (
+              <li key={l} className="rounded-2xl border border-line bg-card shadow-card p-4">
+                <div className="flex items-baseline justify-between">
+                  <span className="font-semibold">{c.label}</span>
+                  <span className="text-sm text-accent-ink">
+                    {c.runs} runs{c.km ? ` · ${c.km} km` : ""}
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-muted">{c.blurb}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-bold">Explore</h2>
+        <ul className="mt-3 grid grid-cols-2 gap-3">
+          {FEATURES.map((f) => (
+            <li key={f.href}>
+              <Link href={f.href} className="block h-full rounded-2xl border border-line bg-card shadow-card p-4 active:border-accent">
+                <span className="grid size-10 place-items-center rounded-xl bg-accent text-on-accent">
+                  <Icon name={f.icon} className="size-5" strokeWidth={2.5} />
+                </span>
+                <p className="mt-2 font-semibold">{f.title}</p>
+                <p className="text-xs text-muted">{f.text}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <footer className="space-y-1 border-t border-line pt-4 text-xs text-muted">
+        <p><Lock aria-hidden className={inlineIcon} /> No sign-up. We only store your nickname and run details (PDPA 2010).</p>
+        <p><TriangleAlert aria-hidden className={inlineIcon} /> RunSphere gives general guidance, not medical advice. Check with a doctor if you have a health condition.</p>
+      </footer>
     </div>
+  );
+}
+
+// The current week depends on today's date, so it renders at request time, not build time.
+async function WeekHeading() {
+  await connection();
+  return (
+    <h2 className="text-xl font-bold">
+      This week&apos;s challenges <span className="text-sm font-normal text-muted">({formatWeek(weekStart(todayKL()))})</span>
+    </h2>
   );
 }
