@@ -45,8 +45,8 @@ export default function Board() {
       <h1 className="display text-3xl uppercase">Leaderboard</h1>
       <p className="mt-1 text-sm text-muted">
         Ranked by <strong className="text-fg">consistency</strong>: runs this week, then streak. Distance only breaks ties.
-        {state.status === "ok" && <> · {state.week}</>}
       </p>
+      {state.status === "ok" && <p className="mt-1 text-sm font-semibold">Week of {state.week}</p>}
 
       <div role="tablist" className="mt-5 grid grid-cols-3 rounded-full border border-line bg-card p-1 shadow-card">
         {LEVELS.map((l) => (
