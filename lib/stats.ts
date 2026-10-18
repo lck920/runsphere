@@ -71,22 +71,15 @@ type BoardRow = { nickname: string; runs: number; km: number; streak: number };
 export type BoardEntry<T extends BoardRow = BoardRow> = T & { rank: number; challenge: ChallengeProgress };
 
 /**
- * Leaderboard = consistency, not speed or distance.
- * Sort by runs this week, then current streak. Distance is shown but never
- * decides rank, so a beginner doing 2 short runs beats someone doing 1 long one.
- * Exact ties share a rank (1, 1, 3) and are listed alphabetically.
+ * Leaderboard = consistency first.
+ * Sort by runs this week, then current streak. Only if both are equal does
+ * distance this week break the tie (then nickname), so every runner gets a
+ * unique position 1, 2, 3… A beginner doing 2 short runs still beats 1 long run.
  */
 export function rankBoard<T extends BoardRow>(rows: T[], level: Level): BoardEntry<T>[] {
-  const sorted = [...rows].sort(
-    (a, b) => b.runs - a.runs || b.streak - a.streak || a.nickname.localeCompare(b.nickname),
-  );
-  const out: BoardEntry<T>[] = [];
-  sorted.forEach((r, i) => {
-    const prev = out[i - 1];
-    const tied = prev && prev.runs === r.runs && prev.streak === r.streak;
-    out.push({ ...r, km: round1(r.km), rank: tied ? prev.rank : i + 1, challenge: challengeProgress(level, r.runs, r.km) });
-  });
-  return out;
+  return [...rows]
+    .sort((a, b) => b.runs - a.runs || b.streak - a.streak || b.km - a.km || a.nickname.localeCompare(b.nickname))
+    .map((r, i) => ({ ...r, km: round1(r.km), rank: i + 1, challenge: challengeProgress(level, r.runs, r.km) }));
 }
 
 /** 6.5 min/km → "6:30" */

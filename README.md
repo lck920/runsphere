@@ -125,7 +125,7 @@ tests/                   Unit tests (npm test)
 
 - **Weeks** run Monday–Sunday in Malaysia time (UTC+8, no daylight saving).
 - **Streak** = consecutive weeks with ≥ 2 runs. This week counts once it reaches 2 runs, and an unfinished week never breaks your streak. See [`lib/stats.ts`](lib/stats.ts).
-- **Leaderboard**: each tab counts this week's runs logged at that level. Rank = runs, then current streak, then nickname. Ties share a rank.
+- **Leaderboard**: each tab counts this week's runs logged at that level. Rank = runs, then current streak; distance this week only breaks ties. Every runner gets a unique position.
 - **Plan rules** in [`lib/plan.ts`](lib/plan.ts): beginners start with run/walk; always a rest day between runs; weekly total grows ≤ ~10%; missed runs → repeat; no runs last week → ease back 20%; completed week → progress.
 
 ## Security & privacy (PDPA 2010)

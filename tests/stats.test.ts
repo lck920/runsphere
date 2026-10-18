@@ -27,7 +27,7 @@ test("streak: none", () => {
   assert.deepEqual(streaks([wk("2026-09-28", 2)], TODAY), { current: 0, longest: 1 }); // gap last week
 });
 
-test("rank: runs first, then streak, distance ignored, ties share rank", () => {
+test("rank: runs, then streak, then distance breaks ties; unique positions", () => {
   const board = rankBoard(
     [
       { nickname: "far", runs: 1, km: 30, streak: 9 },
@@ -37,7 +37,7 @@ test("rank: runs first, then streak, distance ignored, ties share rank", () => {
     ],
     "beginner",
   );
-  assert.deepEqual(board.map((b) => [b.rank, b.nickname]), [[1, "cat"], [2, "ali"], [2, "bea"], [4, "far"]]);
+  assert.deepEqual(board.map((b) => [b.rank, b.nickname]), [[1, "cat"], [2, "bea"], [3, "ali"], [4, "far"]]); // far ran 30 km but only once
 });
 
 test("challenge progress", () => {

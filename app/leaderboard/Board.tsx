@@ -44,7 +44,7 @@ export default function Board() {
     <div>
       <h1 className="display text-3xl uppercase">Leaderboard</h1>
       <p className="mt-1 text-sm text-muted">
-        Ranked by <strong className="text-fg">consistency</strong>: runs this week, then streak. Not distance.
+        Ranked by <strong className="text-fg">consistency</strong>: runs this week, then streak. Distance only breaks ties.
         {state.status === "ok" && <> · {state.week}</>}
       </p>
 
@@ -87,16 +87,13 @@ export default function Board() {
 
       {state.status === "ok" && state.entries.length > 0 && (
         <ol className="mt-3 space-y-2">
-          {state.entries.map((e, _, all) => {
-            // Same runs + same streak = a genuine tie, shown as "=1" so it doesn't look like a bug.
-            const tied = all.filter((x) => x.rank === e.rank).length > 1;
+          {state.entries.map((e) => {
             const mine = e.nickname.toLowerCase() === state.me;
             return (
               <li key={e.nickname} className={`rounded-2xl border border-line bg-card p-4 shadow-card ${mine ? "ring-2 ring-accent" : ""}`}>
                 <div className="flex items-center gap-3">
-                  <span className={`display grid size-9 shrink-0 place-items-center rounded-full ${tied ? "text-base" : "text-lg"} ${e.rank <= 3 ? "bg-accent text-on-accent" : "text-muted"}`}
-                    title={tied ? `Tied for ${e.rank}` : undefined}>
-                    {tied && "="}{e.rank}
+                  <span className={`display grid size-9 shrink-0 place-items-center rounded-full text-lg ${e.rank <= 3 ? "bg-accent text-on-accent" : "text-muted"}`}>
+                    {e.rank}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">
