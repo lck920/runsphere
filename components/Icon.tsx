@@ -2,7 +2,7 @@
 // refer to icons by name so they stay plain data with no React import.
 import {
   Award, Bandage, BookOpen, Brain, CalendarCheck, CalendarDays, ChartLine, Flame, Footprints,
-  House, Map, Medal, Rocket, Route, Smile, Sparkles, Star, Target, Trophy, Zap,
+  House, Map, Medal, Rocket, Route, Smile, Sparkles, Star, Target, Trophy, Users, Watch, Zap,
   type LucideIcon, type LucideProps,
 } from "lucide-react";
 
@@ -26,6 +26,8 @@ const ICONS = {
   star: Star,
   target: Target,
   trophy: Trophy,
+  users: Users,
+  watch: Watch,
   zap: Zap,
 } satisfies Record<string, LucideIcon>;
 

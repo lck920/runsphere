@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, FaceAngry, FaceGrinning, FaceNeutral, FaceSlightlyFrowning, FaceSlightlySmiling, Flame, Lock, PartyPopper } from "lucide-react";
+import { FaceAngry, FaceGrinning, FaceNeutral, FaceSlightlyFrowning, FaceSlightlySmiling, Flame, Lock, PartyPopper } from "lucide-react";
 import Icon, { type IconName } from "@/components/Icon";
-import ProgressBar from "@/components/ProgressBar";
+import ChallengeChecklist from "@/components/ChallengeChecklist";
 import { CHALLENGES, LEVELS } from "@/data/challenges";
 import { formatPace, type ChallengeProgress } from "@/lib/stats";
 import { getSavedNickname, saveNickname } from "@/lib/local";
@@ -184,12 +184,9 @@ function Success({ r, onAgain }: { r: Result; onAgain: () => void }) {
         Streak: <span className="font-semibold text-fg">{r.streak.current} week{r.streak.current === 1 ? "" : "s"} <Flame aria-hidden className={`${inlineIcon} text-accent`} /></span>
         {" · "}Best: {r.streak.longest}
       </p>
-      <div className="text-left">
-        <p className="mb-1 text-sm">
-          {CHALLENGES[r.level].label} challenge: {c.runs}/{c.targetRuns} runs
-          {c.targetKm ? ` · ${c.km}/${c.targetKm} km` : ""} {c.complete && <CircleCheck aria-hidden className={`${inlineIcon} text-accent`} />}
-        </p>
-        <ProgressBar pct={c.pct} label="Weekly challenge progress" />
+      <div>
+        <p className="mb-2 text-left text-xs uppercase tracking-widest text-muted">This week&apos;s {CHALLENGES[r.level].label} challenge</p>
+        <ChallengeChecklist c={c} />
       </div>
       <div className="flex gap-3 pt-2">
         <button onClick={onAgain} className="display flex-1 rounded-full border-2 border-accent py-3 uppercase">Log another</button>

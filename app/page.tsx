@@ -13,6 +13,8 @@ const FEATURES: { href: string; icon: IconName; title: string; text: string }[] 
   { href: "/warmup", icon: "flame", title: "Warm-up", text: "Guided, with a timer" },
   { href: "/progress", icon: "chart", title: "My progress", text: "Streaks, awards, stats" },
   { href: "/learn", icon: "book", title: "Learn", text: "Run smarter, stay healthy" },
+  { href: "/runs", icon: "users", title: "Group runs", text: "Join a run, chat with runners" },
+  { href: "/devices", icon: "watch", title: "Devices", text: "Pair your smartwatch" },
 ];
 
 export default function Home() {

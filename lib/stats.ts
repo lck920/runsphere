@@ -164,11 +164,16 @@ export function progressSummary(runs: RunRow[], today: string) {
   const level = latest?.level ?? "beginner";
   const tw = byWeekLevel.get(`${thisMonday}|${level}`);
 
+  // Weeks (Monday dates) in which at least one level's challenge was completed.
+  const completedWeeks = new Set(
+    [...byWeekLevel].filter(([, x]) => challengeProgress(x.level, x.runs, x.km).complete).map(([k]) => k.split("|")[0]),
+  );
+
   const ctx = {
     runs: runs.length,
     longestStreak: streak.longest,
     bestMonthKm: Math.max(0, ...byMonth.values()),
-    challengesDone: [...byWeekLevel.values()].filter((x) => challengeProgress(x.level, x.runs, x.km).complete).length,
+    challengesDone: completedWeeks.size,
     moodBoosts,
   };
 
@@ -193,6 +198,12 @@ export function progressSummary(runs: RunRow[], today: string) {
     milestones: { reached: MILESTONES.filter((m) => km >= m.km), next: MILESTONES.find((m) => km < m.km) ?? null },
     localFact: localFact(km),
     nextLocalFact: nextLocalFact(km),
+    challengesDone: completedWeeks.size,
+    // Last 8 weeks, oldest → newest: did they complete a challenge that week?
+    challengeWeeks: Array.from({ length: CHART_WEEKS }, (_, i) => {
+      const week = addDays(thisMonday, (i - CHART_WEEKS + 1) * 7);
+      return { week, done: completedWeeks.has(week) };
+    }),
     awards: AWARDS.map(({ earned, ...a }) => ({ ...a, earned: earned(ctx) })),
   };
 }

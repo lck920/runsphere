@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CircleCheck, FaceNeutral, FaceSlightlyFrowning, FaceSlightlySmiling, Flame, Lock, MapPin } from "lucide-react";
 import Icon from "@/components/Icon";
 import Heatmap from "@/components/Heatmap";
+import ChallengeChecklist from "@/components/ChallengeChecklist";
 import ProgressBar from "@/components/ProgressBar";
 import WeeklyChart from "@/components/WeeklyChart";
 import { inlineIcon, inputCls, primaryBtn } from "@/components/styles";
@@ -112,11 +113,24 @@ function Dashboard({ d }: { d: Data }) {
         <p className="-mt-3 text-xs text-muted">On average you feel {mood} points better after a run (mood scale 1–5).</p>
       )}
 
-      <Card title={<>This week: {CHALLENGES[c.level].label} challenge {c.complete && <CircleCheck aria-hidden className={`${inlineIcon} text-accent-ink`} />}</>}>
-        <p className="mb-2 text-sm text-muted">
-          {c.runs}/{c.targetRuns} runs{c.targetKm ? ` · ${c.km}/${c.targetKm} km` : ""}
-        </p>
-        <ProgressBar pct={c.pct} label="Weekly challenge progress" />
+      <Card title={`This week: ${CHALLENGES[c.level].label} challenge`}>
+        <ChallengeChecklist c={c} />
+        {/* One box per week: ticked if any weekly challenge was completed that week. */}
+        <div className="mt-4 border-t border-line pt-3">
+          <p className="mb-2 flex justify-between text-xs text-muted">
+            <span>Last 8 weeks</span>
+            <span>{d.challengesDone} challenge{d.challengesDone === 1 ? "" : "s"} completed</span>
+          </p>
+          <ol className="grid grid-cols-8 gap-1.5">
+            {d.challengeWeeks.map((w) => (
+              <li key={w.week} title={`Week of ${w.week}: ${w.done ? "completed" : "not completed"}`}
+                className={`grid aspect-square place-items-center rounded-lg ${w.done ? "bg-accent text-on-accent" : "border border-line"}`}>
+                {w.done && <CircleCheck aria-hidden className="size-4" />}
+                <span className="sr-only">Week of {w.week}: {w.done ? "completed" : "not completed"}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </Card>
 
       <Card title="Distance per week">
@@ -160,6 +174,16 @@ function Dashboard({ d }: { d: Data }) {
           ))}
         </ul>
       </Card>
+
+      <Link href="/devices" className="flex items-center gap-3 rounded-2xl border border-line bg-card p-4 shadow-card">
+        <span className="grid size-10 place-items-center rounded-xl bg-accent text-on-accent">
+          <Icon name="watch" className="size-5" strokeWidth={2.5} />
+        </span>
+        <span className="flex-1">
+          <span className="block font-semibold">Connect a smartwatch</span>
+          <span className="block text-xs text-muted">Garmin, Apple Watch, COROS and more</span>
+        </span>
+      </Link>
     </>
   );
 }

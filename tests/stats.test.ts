@@ -99,6 +99,9 @@ test("progress summary", () => {
   assert.equal(p.milestones.next?.km, 21.1);
   const earned = p.awards.filter((a) => a.earned).map((a) => a.id);
   assert.deepEqual(earned, ["first", "month10", "challenge"]);
+  // 2 beginner runs in each of the weeks of 28 Sep and 5 Oct → those two weeks ticked; this week (1 run) not yet.
+  assert.deepEqual(p.challengeWeeks.slice(-3).map((w) => w.done), [true, true, false]);
+  assert.equal(p.challengesDone, 2);
 });
 
 test("empty progress doesn't crash", () => {

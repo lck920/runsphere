@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CircleCheck, ExternalLink, Flag, Flame, Target } from "lucide-react";
 import { inlineIcon } from "@/components/styles";
+import ChallengeChecklist from "@/components/ChallengeChecklist";
 import ProgressBar from "@/components/ProgressBar";
 import { CHALLENGES, LEVELS, type Level } from "@/data/challenges";
 import { getSavedNickname } from "@/lib/local";
@@ -84,6 +85,17 @@ export default function Board() {
           <Link href="/log" className="mt-3 inline-block rounded-full bg-accent px-5 py-2 display uppercase text-on-accent">Be the first</Link>
         </div>
       )}
+
+      {/* Your own checklist, if you're on this tab's board this week. */}
+      {state.status === "ok" && (() => {
+        const me = state.entries.find((e) => e.nickname.toLowerCase() === state.me);
+        return me ? (
+          <div className="mt-3 rounded-2xl border border-line bg-card p-4 shadow-card">
+            <p className="mb-2 text-xs uppercase tracking-widest text-muted">Your challenge · {me.nickname}</p>
+            <ChallengeChecklist c={me.challenge} />
+          </div>
+        ) : null;
+      })()}
 
       {state.status === "ok" && state.entries.length > 0 && (
         <ol className="mt-3 space-y-2">
